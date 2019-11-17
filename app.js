@@ -22,7 +22,17 @@ mongoose
   .then(() => console.log('Connected to MongoDB successfully'))
   .catch(err => console.log(err));
   
-app.get('/', (req, res) => res.send('Hello World!!'));
+
+// Serve static assets and index.html in production
+if (process.env.NODE_ENV === "production") {
+  // Serve static assets
+  app.use(express.static("frontend/build"));
+  app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+} else {
+  app.get("/", (req, res) => res.send("Hello World!!"));
+}
 
 /**
  * MIDDLEWARE
@@ -65,11 +75,3 @@ const port = process.env.PORT || 5000;
 // and set server port
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
-// Serve static assets and index.html in production
-if (process.env.NODE_ENV === "production") {
-  // Serve static assets
-  app.use(express.static("frontend/build"));
-  app.get("/", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
-  });
-}
