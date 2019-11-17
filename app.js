@@ -5,6 +5,7 @@ const users = require('./routes/api/users');
 const tweets = require('./routes/api/tweets');
 const bodyParser = require('body-parser');
 const passport = require('passport');
+const path = require("path");
 
 // Local Dependencies
 const DB_URL = require('./config/keys').mongoURI;
@@ -64,3 +65,11 @@ const port = process.env.PORT || 5000;
 // and set server port
 app.listen(port, () => console.log(`Server is running on port ${port}`));
 
+// Serve static assets and index.html in production
+if (process.env.NODE_ENV === "production") {
+  // Serve static assets
+  app.use(express.static("frontend/build"));
+  app.get("/", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "build", "index.html"));
+  });
+}
